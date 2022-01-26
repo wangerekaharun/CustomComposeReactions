@@ -1,1 +1,6 @@
-
+- Introduction
+- Reactions Recap
+- Looking at `ReactionPicker`
+- Adding Custom Reactions
+- Adding Animations to Reactions
+- Conclusion
