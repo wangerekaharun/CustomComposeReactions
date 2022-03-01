@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CustomComposeReactions">
         <activity
+            android:name=".activities.CustomMessagesActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ChannelsActivity"
             android:exported="true"
             android:theme="@style/Theme.CustomComposeReactions">

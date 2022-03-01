@@ -1,5 +1,6 @@
 - Introduction
 - Reactions Recap
+- Overriding Default Reactions
 - Looking at `ReactionPicker`
 - Adding Custom Reactions
 - Adding Animations to Reactions
