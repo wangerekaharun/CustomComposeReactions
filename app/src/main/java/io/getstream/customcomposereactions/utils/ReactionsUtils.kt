@@ -1,6 +1,5 @@
 package io.getstream.customcomposereactions.utils
 
-import io.getstream.chat.android.compose.ui.util.DefaultReactionTypes
 import io.getstream.customcomposereactions.R
 
 val customReactions = mapOf(
