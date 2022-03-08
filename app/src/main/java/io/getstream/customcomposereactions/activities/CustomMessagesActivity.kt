@@ -4,10 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
@@ -15,14 +23,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.MessageMode
+import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.state.messages.SelectedMessageOptionsState
 import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
@@ -59,8 +66,6 @@ class CustomMessagesActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val channelId = checkNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
-        val channelType = checkNotNull(intent.getStringExtra(KEY_CHANNEL_TYPE))
 
         setContent {
             ChatTheme(
@@ -73,9 +78,9 @@ class CustomMessagesActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     fun CustomUi(onBackPressed: () -> Unit) {
-        val context = LocalContext.current
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
         val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
         val user by listViewModel.user.collectAsState()
@@ -160,50 +165,75 @@ class CustomMessagesActivity : ComponentActivity() {
                             listViewModel.performMessageAction(action)
                         },
                         onDismiss = { listViewModel.removeOverlay() },
+                        onShowMoreReactionsSelected = {}
                     )
                 } else if (selectedMessageState is SelectedMessageReactionsState) {
-                    var isAnimated by remember { mutableStateOf(false) }
+                    var isAnimated by remember { mutableStateOf(true) }
+                    val density = LocalDensity.current
 
-                    SelectedReactionsMenu(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 20.dp)
-                            .wrapContentSize(),
-                        shape = ChatTheme.shapes.attachment,
-                        message = selectedMessage,
-                        currentUser = user,
-                        onMessageAction = { action ->
-                            Toast.makeText(context,action.message.latestReactions.first().type,Toast.LENGTH_SHORT).show()
-                            sendReactions(selectedMessage)
-                        },
-                        onDismiss = {
-                            listViewModel.removeOverlay()
-                        }
-                    )
+                    AnimatedVisibility(
+                        visible = isAnimated,
+                        enter = slideInVertically(
+                            initialOffsetY =  {  with(density) { -60.dp.roundToPx() } }
+                        ) + expandVertically(
+                            expandFrom = Alignment.Top
+                        ) + fadeIn(
+                            initialAlpha = 0.2f
+                        ),
+                        exit = slideOutVertically() + shrinkVertically() + fadeOut()
+
+                    ) {
+                        SelectedReactionsMenu(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(horizontal = 20.dp)
+                                .wrapContentSize(),
+                            shape = ChatTheme.shapes.attachment,
+                            message = selectedMessage,
+                            currentUser = user,
+                            reactionTypes = customReactions,
+                            onMessageAction = { action ->
+                                when(action){
+                                    is React -> {
+                                        sendReactions(selectedMessage, action.reaction, listViewModel)
+                                    }
+                                    else -> {
+                                        composerViewModel.performMessageAction(action)
+                                        listViewModel.performMessageAction(action)
+                                    }
+                                }
+                            },
+                            onDismiss = {
+                                listViewModel.removeOverlay()
+                            }
+                        ,
+                            onShowMoreReactionsSelected = {}
+                        )
+                    }
+
                 }
             }
         }
     }
 
-    private fun sendReactions(message: Message) {
-        val reaction = Reaction(
-            messageId = message.id,
-            type = "reactionType",
-            score = 0,
-            extraData = mutableMapOf("customField" to 1)
-        )
+    private fun sendReactions(
+        message: Message,
+        reaction: Reaction,
+        listViewModel: MessageListViewModel
+    ) {
         if (message.ownReactions.any { it.messageId == reaction.messageId && it.type == reaction.type }) {
             ChatClient.instance().deleteReaction(message.id, reaction.type).enqueue { result ->
                 if (result.isSuccess) {
-                    val sentReaction = result.data()
+                    listViewModel.removeOverlay()
                     Log.e("Message", "Reaction Deleted")
                 } else {
-                    Log.e("Message", "Deleting reaction Failed: ${result.error().message}")
+                    Log.d("Message", "Deleting reaction Failed: ${result.error().message}")
                 }
             }
         } else {
             ChatClient.instance().sendReaction(reaction).enqueue { result ->
                 if (result.isSuccess) {
+                    listViewModel.removeOverlay()
                     val sentReaction = result.data()
                     Log.d("Message", "Message Reaction score is: ${sentReaction.type}")
                 } else {
@@ -216,12 +246,10 @@ class CustomMessagesActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
-        private const val KEY_CHANNEL_TYPE = "channelType"
 
-        fun getIntent(context: Context, channelId: String, channelType: String): Intent {
+        fun getIntent(context: Context, channelId: String): Intent {
             return Intent(context, CustomMessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
-                putExtra(KEY_CHANNEL_TYPE, channelType)
             }
         }
     }

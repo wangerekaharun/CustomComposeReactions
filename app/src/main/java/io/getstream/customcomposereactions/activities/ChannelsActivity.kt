@@ -63,7 +63,7 @@ fun ChannelsList(onBackPressed: () -> Unit) {
     ChannelsScreen(
         title = stringResource(id = R.string.app_name),
         onItemClick = { channel ->
-            context.startActivity(CustomMessagesActivity.getIntent(context, channel.cid, channel.type))
+            context.startActivity(CustomMessagesActivity.getIntent(context, channel.cid))
         },
         onBackPressed = { onBackPressed.invoke() }
     )
