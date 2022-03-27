@@ -42,6 +42,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.customcomposereactions.customreactions.CustomReactionOptions
 import io.getstream.customcomposereactions.utils.customReactions
 
 class CustomMessagesActivity : ComponentActivity() {
@@ -156,56 +157,53 @@ class CustomMessagesActivity : ComponentActivity() {
                             listViewModel.isInThread
                         ),
                         message = selectedMessage,
-                        onMessageAction = { action ->
-                            composerViewModel.performMessageAction(action)
-                            listViewModel.performMessageAction(action)
-                        },
+                        onMessageAction = { },
                         onDismiss = { listViewModel.removeOverlay() },
-                        onShowMoreReactionsSelected = {}
+                        onShowMoreReactionsSelected = {},
+                        headerContent = {
+                            CustomReactionOptions(
+                                message = selectedMessage,
+                                reactionTypes = customReactions ,
+                                onMessageAction = { action ->
+                                    composerViewModel.performMessageAction(action)
+                                    listViewModel.performMessageAction(action)
+                                }
+                            )
+                        }
                     )
                 } else if (selectedMessageState is SelectedMessageReactionsState) {
-                    var isAnimated by remember { mutableStateOf(true) }
-                    val density = LocalDensity.current
-
-                    AnimatedVisibility(
-                        visible = isAnimated,
-                        enter = slideInVertically(
-                            initialOffsetY =  {  with(density) { -60.dp.roundToPx() } }
-                        ) + expandVertically(
-                            expandFrom = Alignment.Top
-                        ) + fadeIn(
-                            initialAlpha = 0.2f
-                        ),
-                        exit = slideOutVertically() + shrinkVertically() + fadeOut()
-
-                    ) {
-                        SelectedReactionsMenu(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(horizontal = 20.dp)
-                                .wrapContentSize(),
-                            shape = ChatTheme.shapes.attachment,
-                            message = selectedMessage,
-                            currentUser = user,
-                            reactionTypes = customReactions,
-                            onMessageAction = { action ->
-                                when(action){
-                                    is React -> {
-                                        sendReactions(selectedMessage, action.reaction, listViewModel)
-                                    }
-                                    else -> {
-                                        composerViewModel.performMessageAction(action)
-                                        listViewModel.performMessageAction(action)
+                    SelectedReactionsMenu(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(horizontal = 20.dp)
+                            .wrapContentSize(),
+                        shape = ChatTheme.shapes.attachment,
+                        message = selectedMessage,
+                        currentUser = user,
+                        reactionTypes = customReactions,
+                        onMessageAction = { },
+                        onDismiss = {
+                            listViewModel.removeOverlay()
+                        },
+                        onShowMoreReactionsSelected = {},
+                        headerContent = {
+                            CustomReactionOptions(
+                                message = selectedMessage,
+                                reactionTypes = customReactions ,
+                                onMessageAction = { action ->
+                                    when(action){
+                                        is React -> {
+                                            sendReactions(selectedMessage, action.reaction, listViewModel)
+                                        }
+                                        else -> {
+                                            composerViewModel.performMessageAction(action)
+                                            listViewModel.performMessageAction(action)
+                                        }
                                     }
                                 }
-                            },
-                            onDismiss = {
-                                listViewModel.removeOverlay()
-                            }
-                        ,
-                            onShowMoreReactionsSelected = {}
-                        )
-                    }
+                            )
+                        }
+                    )
 
                 }
             }
