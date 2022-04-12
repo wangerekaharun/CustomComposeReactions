@@ -11,7 +11,9 @@
         <entry key="app/src/main/res/drawable-v24/ic_selected_baseline_sentiment_very_dissatisfied_24.xml" value="0.2445" />
         <entry key="app/src/main/res/drawable/ic_baseline_celebration_24.xml" value="0.2445" />
         <entry key="app/src/main/res/drawable/ic_baseline_emoji_emotions_24.xml" value="0.2445" />
+        <entry key="app/src/main/res/drawable/ic_baseline_exposure_plus_1_24.xml" value="0.266" />
         <entry key="app/src/main/res/drawable/ic_baseline_rocket_launch_24.xml" value="0.2445" />
+        <entry key="app/src/main/res/drawable/ic_baseline_sentiment_very_dissatisfied_24.xml" value="0.266" />
         <entry key="app/src/main/res/layout/activity_messages.xml" value="0.42083333333333334" />
       </map>
     </option>

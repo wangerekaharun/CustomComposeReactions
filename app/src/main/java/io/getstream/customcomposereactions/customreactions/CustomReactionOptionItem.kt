@@ -32,7 +32,7 @@ fun CustomReactionOptionItem(
     val normalIconSize = 24.dp
     val animatedIconSize = 50.dp
     val sizeAnimation by animateDpAsState(
-        if(currentState == ReactionButtonState.ACTIVE) 24.1.dp else 24.dp,
+        if (currentState == ReactionButtonState.ACTIVE) 24.1.dp else 24.dp,
         animationSpec = keyframes {
             durationMillis = 500
             animatedIconSize.at(100)
@@ -43,7 +43,7 @@ fun CustomReactionOptionItem(
         }
     )
 
-    Icon(
+    Image(
         modifier = Modifier
             .size(size = sizeAnimation)
             .scale(springValue)
@@ -53,7 +53,7 @@ fun CustomReactionOptionItem(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(bounded = false),
                 onClick = {
-                    currentState = if(currentState == ReactionButtonState.IDLE)
+                    currentState = if (currentState == ReactionButtonState.IDLE)
                         ReactionButtonState.ACTIVE else ReactionButtonState.IDLE
                     onReactionOptionSelected(option)
                 }

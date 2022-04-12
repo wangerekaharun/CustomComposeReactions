@@ -43,8 +43,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.customcomposereactions.customreactions.CustomReactionOptions
-import io.getstream.customcomposereactions.utils.CustomReactions
-import io.getstream.customcomposereactions.utils.CustomReactionsFactory
+import io.getstream.customcomposereactions.utils.customReactionIcons
+import io.getstream.customcomposereactions.utils.CustomReactionIconFactory
 
 class CustomMessagesActivity : ComponentActivity() {
     private val factory by lazy {
@@ -68,7 +68,7 @@ class CustomMessagesActivity : ComponentActivity() {
         channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: ""
         setContent {
             ChatTheme(
-                reactionIconFactory = CustomReactionsFactory()
+                reactionIconFactory = CustomReactionIconFactory()
             ) {
                 CustomUi {
                     onBackPressed()
@@ -167,7 +167,7 @@ class CustomMessagesActivity : ComponentActivity() {
                         headerContent = {
                             CustomReactionOptions(
                                 message = selectedMessage,
-                                reactionTypes = CustomReactions(),
+                                reactionTypes = customReactionIcons(),
                                 onMessageAction = { action ->
                                     composerViewModel.performMessageAction(action)
                                     listViewModel.performMessageAction(action)
@@ -184,7 +184,7 @@ class CustomMessagesActivity : ComponentActivity() {
                         shape = ChatTheme.shapes.attachment,
                         message = selectedMessage,
                         currentUser = user,
-                        reactionTypes = CustomReactions(),
+                        reactionTypes = customReactionIcons(),
                         onMessageAction = { action ->
                             composerViewModel.performMessageAction(action)
                             listViewModel.performMessageAction(action)
@@ -196,7 +196,7 @@ class CustomMessagesActivity : ComponentActivity() {
                         headerContent = {
                             CustomReactionOptions(
                                 message = selectedMessage,
-                                reactionTypes = CustomReactions()
+                                reactionTypes = customReactionIcons()
 
                             ) { action ->
                                 when (action) {

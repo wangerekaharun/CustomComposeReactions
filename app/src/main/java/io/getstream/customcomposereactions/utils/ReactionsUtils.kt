@@ -8,28 +8,28 @@ import io.getstream.customcomposereactions.R
 
 
 @Composable
-fun CustomReactions(): Map<String, ReactionIcon> {
+fun customReactionIcons(): Map<String, ReactionIcon> {
     return mapOf(
-        "reaction_one" to ReactionIcon(
+        "happy" to ReactionIcon(
             painter = painterResource(id = R.drawable.ic_baseline_emoji_emotions_24),
-            selectedPainter = painterResource(id = R.drawable.ic_baseline_emoji_emotions_24)
+            selectedPainter = painterResource(id = R.drawable.ic_selected_baseline_emoji_emotions_24)
         ),
-        "reaction_two" to ReactionIcon(
+        "rocket" to ReactionIcon(
             painter = painterResource(id = R.drawable.ic_baseline_rocket_launch_24),
-            selectedPainter = painterResource(id = R.drawable.ic_baseline_rocket_launch_24),
+            selectedPainter = painterResource(id = R.drawable.ic_selected_baseline_rocket_launch_24),
         ),
 
-        "reaction_three" to ReactionIcon(
+        "sad" to ReactionIcon(
             painter = painterResource(id = R.drawable.ic_baseline_sentiment_very_dissatisfied_24),
-            selectedPainter = painterResource(id = R.drawable.ic_baseline_sentiment_very_dissatisfied_24)
+            selectedPainter = painterResource(id = R.drawable.ic_selected_baseline_sentiment_very_dissatisfied_24)
         ),
-        "reaction_four" to ReactionIcon(
+        "plus_one" to ReactionIcon(
             painter = painterResource(id = R.drawable.ic_baseline_exposure_plus_1_24),
-            selectedPainter = painterResource(id = R.drawable.ic_baseline_exposure_plus_1_24)
+            selectedPainter = painterResource(id = R.drawable.ic_selected_baseline_exposure_plus_1_24)
         ),
-        "reaction_five" to ReactionIcon(
+        "celebration" to ReactionIcon(
             painter = painterResource(id = R.drawable.ic_baseline_celebration_24),
-            selectedPainter = painterResource(id = R.drawable.ic_baseline_celebration_24)
+            selectedPainter = painterResource(id = R.drawable.ic_selected_baseline_celebration_24)
         )
     )
 
