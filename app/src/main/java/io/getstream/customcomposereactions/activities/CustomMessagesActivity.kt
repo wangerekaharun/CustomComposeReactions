@@ -7,20 +7,21 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
@@ -41,16 +42,15 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.offline.ChatDomain
 import io.getstream.customcomposereactions.customreactions.CustomReactionOptions
-import io.getstream.customcomposereactions.utils.customReactions
+import io.getstream.customcomposereactions.utils.CustomReactions
+import io.getstream.customcomposereactions.utils.CustomReactionsFactory
 
 class CustomMessagesActivity : ComponentActivity() {
     private val factory by lazy {
         MessagesViewModelFactory(
             context = this,
             chatClient = ChatClient.instance(),
-            chatDomain = ChatDomain.instance(),
             channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: "",
             enforceUniqueReactions = true,
             messageLimit = 40
@@ -60,14 +60,15 @@ class CustomMessagesActivity : ComponentActivity() {
     private val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
     private val attachmentsPickerViewModel by viewModels<AttachmentsPickerViewModel>(factoryProducer = { factory })
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
+    private lateinit var channelId: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        channelId = intent.getStringExtra(KEY_CHANNEL_ID) ?: ""
         setContent {
             ChatTheme(
-                reactionTypes = customReactions
+                reactionIconFactory = CustomReactionsFactory()
             ) {
                 CustomUi {
                     onBackPressed()
@@ -157,13 +158,16 @@ class CustomMessagesActivity : ComponentActivity() {
                             listViewModel.isInThread
                         ),
                         message = selectedMessage,
-                        onMessageAction = { },
+                        onMessageAction = { action ->
+                            composerViewModel.performMessageAction(action)
+                            listViewModel.performMessageAction(action)
+                        },
                         onDismiss = { listViewModel.removeOverlay() },
                         onShowMoreReactionsSelected = {},
                         headerContent = {
                             CustomReactionOptions(
                                 message = selectedMessage,
-                                reactionTypes = customReactions ,
+                                reactionTypes = CustomReactions(),
                                 onMessageAction = { action ->
                                     composerViewModel.performMessageAction(action)
                                     listViewModel.performMessageAction(action)
@@ -180,8 +184,11 @@ class CustomMessagesActivity : ComponentActivity() {
                         shape = ChatTheme.shapes.attachment,
                         message = selectedMessage,
                         currentUser = user,
-                        reactionTypes = customReactions,
-                        onMessageAction = { },
+                        reactionTypes = CustomReactions(),
+                        onMessageAction = { action ->
+                            composerViewModel.performMessageAction(action)
+                            listViewModel.performMessageAction(action)
+                        },
                         onDismiss = {
                             listViewModel.removeOverlay()
                         },
@@ -189,19 +196,23 @@ class CustomMessagesActivity : ComponentActivity() {
                         headerContent = {
                             CustomReactionOptions(
                                 message = selectedMessage,
-                                reactionTypes = customReactions ,
-                                onMessageAction = { action ->
-                                    when(action){
-                                        is React -> {
-                                            sendReactions(selectedMessage, action.reaction, listViewModel)
-                                        }
-                                        else -> {
-                                            composerViewModel.performMessageAction(action)
-                                            listViewModel.performMessageAction(action)
-                                        }
+                                reactionTypes = CustomReactions()
+
+                            ) { action ->
+                                when (action) {
+                                    is React -> {
+                                        sendReactions(
+                                            selectedMessage,
+                                            action.reaction,
+                                            listViewModel
+                                        )
+                                    }
+                                    else -> {
+                                        composerViewModel.performMessageAction(action)
+                                        listViewModel.performMessageAction(action)
                                     }
                                 }
-                            )
+                            }
                         }
                     )
 
@@ -225,7 +236,7 @@ class CustomMessagesActivity : ComponentActivity() {
                 }
             }
         } else {
-            ChatClient.instance().sendReaction(reaction).enqueue { result ->
+            ChatClient.instance().sendReaction(reaction, enforceUnique = true).enqueue { result ->
                 if (result.isSuccess) {
                     listViewModel.removeOverlay()
                     val sentReaction = result.data()

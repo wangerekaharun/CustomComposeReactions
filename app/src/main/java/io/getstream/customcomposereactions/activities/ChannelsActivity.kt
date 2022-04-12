@@ -11,7 +11,9 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.offline.ChatDomain
+import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
+import io.getstream.chat.android.offline.plugin.configuration.Config
+import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.customcomposereactions.R
 
 
@@ -45,14 +47,20 @@ class ChannelsActivity : ComponentActivity() {
     }
 
     private fun setupStreamChatSDK() {
-        ChatClient.Builder("b67pax5b2wdq", applicationContext)
-            .logLevel(ChatLogLevel.ALL)
-            .build()
+        val offlinePluginFactory = StreamOfflinePluginFactory(
+            config = Config(
+                backgroundSyncEnabled = true,
+                userPresence = true,
+                persistenceEnabled = true,
+                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+            ),
+            appContext = applicationContext,
+        )
 
-        val client = ChatClient.Builder("b67pax5b2wdq", applicationContext)
+        ChatClient.Builder("b67pax5b2wdq", applicationContext)
+            .withPlugin(offlinePluginFactory)
             .logLevel(ChatLogLevel.ALL)
             .build()
-        ChatDomain.Builder(client, applicationContext).build()
     }
 }
 

@@ -23,12 +23,14 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptionItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
 
 @Composable
 internal fun CustomReactionOptions(
     message: Message,
-    reactionTypes: Map<String, Int>,
+    reactionTypes: Map<String, ReactionIcon>,
     onMessageAction: (MessageAction) -> Unit,
 ) {
     ReactionOptions(
@@ -55,7 +57,7 @@ fun ReactionOptions(
     modifier: Modifier = Modifier,
     numberOfReactionsShown: Int = 5,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
-    reactionTypes: Map<String, Int> = ChatTheme.reactionTypes,
+    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
         DefaultReactionOptionItem(
             option = option,
@@ -63,10 +65,11 @@ fun ReactionOptions(
         )
     },
 ) {
-    val options = reactionTypes.entries.map { (type, drawable) ->
+    val options = reactionTypes.entries.map { (type, reactionIcon) ->
+        val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
+        val painter = reactionIcon.getPainter(isSelected)
         ReactionOptionItemState(
-            painter = painterResource(id = drawable),
-            isSelected = ownReactions.any { ownReaction -> ownReaction.type == type },
+            painter = painter,
             type = type
         )
     }
@@ -105,12 +108,10 @@ internal fun DefaultReactionOptionItem(
         animationState = ReactionState.END
     }
 
-    CustomReactionOptionItem (
+    CustomReactionOptionItem(
         option = option,
         springValue = springValue,
-        onReactionOptionSelected = { onReactionOptionSelected(option) }
-
-    )
+        onReactionOptionSelected = { onReactionOptionSelected(option) })
 }
 
 enum class ReactionState {
