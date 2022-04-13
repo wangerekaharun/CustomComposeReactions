@@ -256,7 +256,7 @@ enum class ReactionButtonState {
 To sum up what happens:
 
 - This creates the `ReactionIcon` size animation. The animation enlarges the reaction icon once a user taps on any of the reactions.
-- Here, you create an `Image` composable for a single reaction. You also pass the spring animation to the `Modifier` . When the image is clicked, you also update the `ReactionButtonState`  for the size animation. The icon enlarges then once the animation is complete, you send your reaction to the message by calling ` onReactionOptionSelected(option) inside the `finishedListener` of the animation.
+- Here, you create an `Image` composable for a single reaction. You also pass the spring animation to the `Modifier` . When the image is clicked, you also update the `ReactionButtonState`  for the size animation. The icon enlarges then once the animation is complete, you send your reaction to the message by calling ` onReactionOptionSelected(option)` inside the `finishedListener` of the animation.
 
 #### Adding CustomReactionOptions to SelectedReactionsMenu
 
@@ -300,7 +300,7 @@ SelectedMessageMenu(
 )
 ```
 
-From the code above, you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons'  in the `headerContent`.  In addition, you also pass your actions so that the SDK can perform the message action. Running the app, you should have the spring animation on your reactions now.
+From the code above, you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons`  in the `headerContent`.  In addition, you also pass your actions so that the SDK can perform the message action. Running the app, you should have the spring animation on your reactions now.
 
 ![reaction sping animation](images/spring_animation.gif "Spring Aniamtions in Reactions.")
 
@@ -335,7 +335,7 @@ SelectedReactionsMenu(
 )
 ```
 
-From the code above, as before, you add your `CustomReactionOptions` component, passing in the `selectedMessage` and your `customReactionIcons' . Here, the only difference is that you use the [Stream low-level client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client/) to send reactions. Running the app, you should have the size animation when you tap a single reaction.
+From the code above, as before, you add your `CustomReactionOptions` component, passing in the `selectedMessage` and your `customReactionIcons`. Here, the only difference is that you use the [Stream low-level client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client/) to send reactions. Running the app, you should have the size animation when you tap a single reaction.
 
 ![reaction icon size animation](images/reaction_icon_size_animation.gif "Reaction Icon Size Animation.")
 
