@@ -255,7 +255,7 @@ enum class ReactionButtonState {
 
 To sum up what happens:
 
-- This creates the ReactionIcon size animation. The animation enlarges the reaction once a user taps on any of the reactions.
+- This creates the `ReactionIcon` size animation. The animation enlarges the reaction icon once a user taps on any of the reactions.
 - Here, you create an `Image` composable for a single reaction. You also pass the spring animation to the `Modifier` . When the image is clicked, you also update the `ReactionButtonState`  for the size animation. The icon enlarges then once the animation is complete, you send your reaction to the message by calling ` onReactionOptionSelected(option) inside the `finishedListener` of the animation.
 
 #### Adding CustomReactionOptions to SelectedReactionsMenu
