@@ -191,12 +191,157 @@ internal fun DefaultReactionOptionItem(
 }
 ```
 
+In the code above, you're creating an animation value  for the sping animation.  You also have a `LaunchedEffect` block that updates the animation state. Here's how the `ReactionButtonState` looks like:
 
+```kotlin
+enum class ReactionButtonState {
+    IDLE, ACTIVE
+}
+```
 
-#### Animating the Reaction Icon Size
+It's an enum class which holds state of the reaction icon.  Below the `LaunchedEffect` you have a `CustomReactionOptionItem` . This is a custom implementation for overriding the `DefaultReactionOptionItem`. This allows you to add the animations on top of the default implementations. This is how the class is:
+
+````kotlin
+@Composable
+fun CustomReactionOptionItem(
+    option: ReactionOptionItemState,
+    springValue: Float,
+    onReactionOptionSelected: (ReactionOptionItemState) -> Unit
+) {
+    // 1
+    var currentState by remember { mutableStateOf(ReactionButtonState.IDLE) }
+    val normalIconSize = 24.dp
+    val animatedIconSize = 50.dp
+    val sizeAnimation by animateDpAsState(
+        if (currentState == ReactionButtonState.ACTIVE) 24.1.dp else 24.dp,
+        animationSpec = keyframes {
+            durationMillis = 500
+            animatedIconSize.at(100)
+            normalIconSize.at(200)
+        },
+        finishedListener = {
+            onReactionOptionSelected(option)
+        }
+    )
+
+    // 2
+    Image(
+        modifier = Modifier
+            .size(size = sizeAnimation)
+            .scale(springValue)
+            .offset(x = (-15).dp + (15 * springValue).dp)
+            .rotate(-45f + (45 * springValue))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(bounded = false),
+                onClick = {
+                    currentState = if (currentState == ReactionButtonState.IDLE)
+                        ReactionButtonState.ACTIVE else ReactionButtonState.IDLE
+                    onReactionOptionSelected(option)
+                }
+            ),
+        painter = option.painter,
+        contentDescription = option.type,
+    )
+}
+
+enum class ReactionButtonState {
+    IDLE, ACTIVE
+}
+````
+
+To sum up what happens:
+
+- This creates the ReactionIcon size animation. The animation enalrges the reaction once a user taps on any of the reaction.
+- Here, you create an `Image` composable for the a single reaction.  You also pass the spring animation to the `Modifier` . You also update the `ReactionButtonState`  for the size animation when the images is clicked. The icons enlarges then once the animation is complete you send your reaction to the message by calling ` onReactionOptionSelected(option) inside the `finishedListener` of the animation.
+
+#### Adding CustomReactionOptions to SelectedReactionsMenu
+
+You already have all the custom implementation for reactions, now you'll learn how to integrate this custom implementation to `SelectedReactionsMenu`. 
+
+To start  with you'll use the `headerContent` property of `SelectedMessageMenu` and `SelectedReactionsMenu` to add the custom UI implementations.
+
+**Note:** to use these components you need to have used the CustomUI options where you add the components to the **MesssageScreen**. You can view the full sample class [here](https://github.com/wangerekaharun/StreamComposeAttachments/blob/main/app/src/main/java/io/getstream/streamcomposeattachments/activities/CustomMessageScreen.kt).
+
+This is how the `SelectedMessageMenu` , a component that shows different message options  when a message is selected looks like:
+
+```kotlin
+SelectedMessageMenu(
+    modifier = Modifier
+        .align(Alignment.Center)
+        .padding(horizontal = 20.dp)
+        .wrapContentSize(),
+    shape = ChatTheme.shapes.attachment,
+    messageOptions = defaultMessageOptionsState(
+        selectedMessage,
+        user,
+        listViewModel.isInThread
+    ),
+    message = selectedMessage,
+    onMessageAction = { action ->
+        composerViewModel.performMessageAction(action)
+        listViewModel.performMessageAction(action)
+    },
+    onDismiss = { listViewModel.removeOverlay() },
+    onShowMoreReactionsSelected = {},
+    headerContent = {
+        CustomReactionOptions(
+            message = selectedMessage,
+            reactionTypes = customReactionIcons(),
+            onMessageAction = { action ->
+                composerViewModel.performMessageAction(action)
+                listViewModel.performMessageAction(action)
+            }
+        )
+    }
+)
+```
+
+From the code above, you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons'  in the ` `headerContent`.  In addtion, you also pass you actions so that the SDK can  perform the message action. Running the app, you should have the srping animation on your reactions now.
+
+![reaction sping animation](images/spring_animation.gif "Spring Aniamtions in Reactions.")
+
+Wow you can now see the amazing spins animations on your reactions!  See how easy it is to customize the components :-)
+
+Lastly, you'll look at the size animation on the reaction icon.  This is how the `SelectedReactionsMenu` , a components that shows all user reactions for a message looks like:
+
+```       kotlin
+SelectedReactionsMenu(
+    modifier = Modifier
+        .align(Alignment.Center)
+        .padding(horizontal = 20.dp)
+        .wrapContentSize(),
+    shape = ChatTheme.shapes.attachment,
+    message = selectedMessage,
+    currentUser = user,
+    reactionTypes = customReactionIcons(),
+    onMessageAction = {},
+    onDismiss = {
+        listViewModel.removeOverlay()
+    },
+    onShowMoreReactionsSelected = {},
+    headerContent = {
+        CustomReactionOptions(
+            message = selectedMessage,
+            reactionTypes = customReactionIcons()
+        ) { action ->
+            composerViewModel.performMessageAction(action)
+            listViewModel.performMessageAction(action)
+        }
+    }
+)
+```
+
+From the code above, as before you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons' .  The only difference is that here you use the [Stream low-level client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client/) to send reactions.  Running the app you should have the size animation when you tap a single reaction.
+
+![reaction icon size animation](images/reaction_icon_size_animation.gif "Reaction Icon Size Animation.")
+
+You can add as many animations to these UI Componets according to your requirements. 
 
 ### Conclusion
 
 To learn more about Stream's Android SDK, go to the [GitHub repository](https://github.com/GetStream/stream-chat-android) which is a great starting point to all the available docs and samples.
+
+Now that the JetPack Compose Components are stable, we can't wait to see what you'll build. And as seen from this article they're highly customizable.  In case you have any feedback on using the SDK, reach the team [on Twitter](https://twitter.com/getstream_io) and [on GitHub](https://github.com/GetStream/stream-chat-android).
 
 You can get the full sample project with the examples shown in this tutorial [here]https://github.com/wangerekaharun/CustomComposeReactions).
