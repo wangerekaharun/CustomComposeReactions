@@ -167,6 +167,9 @@ The Stream Jetpack Compose UI components are highly customizable. It's easy for 
 
 #### Adding Spring Animation
 
+You're going to add spring animations to `DefaultReactionOptionItem` component so that your reaction icons can have the spring animations.
+
+
 ```kotlin
 @Composable
 internal fun DefaultReactionOptionItem(
