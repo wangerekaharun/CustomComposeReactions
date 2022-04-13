@@ -185,10 +185,7 @@ class CustomMessagesActivity : ComponentActivity() {
                         message = selectedMessage,
                         currentUser = user,
                         reactionTypes = customReactionIcons(),
-                        onMessageAction = { action ->
-                            composerViewModel.performMessageAction(action)
-                            listViewModel.performMessageAction(action)
-                        },
+                        onMessageAction = {},
                         onDismiss = {
                             listViewModel.removeOverlay()
                         },
