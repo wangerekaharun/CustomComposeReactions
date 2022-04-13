@@ -2,13 +2,13 @@
 
 In this article, you'll learn how to add your custom reactions to Stream's Compose UI components. You'll use the [low-level Android client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client) library to send reactions.
 
-With the new SDK v5, the ReactionsTypes API has been imporved to now support even more complext reactions. This version adds support for animated emojis or uploaded images just like other social media platforms. 
+With the new **SDK v5**, the ReactionsTypes API supports even more complex reactions. This version supports animated emojis or uploaded images just like other social media platforms. 
 
 **Note**: The [Jetpack Compose UI components](https://getstream.io/blog/jetpack-compose-sdk/) are now stable. Check the full announcement [here](https://getstream.io/blog/android-v5-sdk-release/).  You can try out the new SDK in the [Jetpack Compose Chat Tutorial](https://getstream.io/chat/compose/tutorial/).
 
 ### Overriding Default Reactions
 
-By Default the Stream Chat SDK has the following reactions: thumbs up/down, love, LOL. Users can react to messages with either of these reactions. As with all the components in the Chat SDK, you can override this default reactions and provide your own custom ones. There are two ways in which you can provide your own custom reactions:
+The Stream Chat SDK has the following reactions: thumbs up/down, love, LOL. Users can react to messages with either of these reactions. As with all the components in the Chat SDK, you can override these default reactions and provide your custom ones. There are two ways in which you can provide your custom reactions:
 
 - Using the `reactionIconFactory` property in `ChatTheme`.
 - Using the `reactionTypes` property in the `SelectedReactionsMenu` or `SelectedMessageMenu`
@@ -17,7 +17,7 @@ First of all, you'll deep dive into the `ReactionIconFactory` class in the next 
 
 ### Looking at `ReactionIconFactory`
 
-This is a newly introduced class with the new version. This is the class that handles all the creation of the icons for all the reactions types. You can create your custom `ReactionIconFactory` by implementing this class as shown below:
+The `ReactionIconFactory` is a newly introduced class. It handles all the creation of the icons for all the reactions types. You can create your custom `ReactionIconFactory` by implementing this class as shown below:
 
 ```kotlin
 class CustomReactionIconFactory(
@@ -68,7 +68,7 @@ class CustomReactionIconFactory(
 
 To sum up what the code above does:
 
-- You have a map of your custom reactions. Each reaction has it's `ReactionDrawable` which is a data class that holds the drawable resources for the reaction. It has the drawables for both the normal and selected state of the icon.
+- You have a map of your custom reactions. Each reaction has its `ReactionDrawable`, a data class that holds the drawable resources for the reaction. It has the drawables for both the normal and selected state of the icon.
 - The `ReactionIconFactory` requires you to override three methods:
   - `createReactionIcon` - creates a `ReactionIcon` for your reaction types. A `ReactionIcon` contains painters for your reaction in normal and selected states.
   - `createReactionIcons` - creates all the `ReactionIcon`'s for alll your reactions. It uses the `createReactionIcon` to create the icons.
@@ -94,7 +94,7 @@ When you run your app, you should see:
 
 ![message custom reactions](images/message_with_custom_reaction.png "Message with Custom Reactions.")
 
-In addittion to using the `reactionIconFactory` in `ChatTheme` you can also provide your custom reactions using the `SelectedReactionsMenu` or  `SelectedMessageMenu`. You'll be looking at that in the next section.
+In addition to using the `reactionIconFactory` in `ChatTheme` you can also provide your custom reactions using the `SelectedReactionsMenu` or  `SelectedMessageMenu`. You'll be looking at that in the next section.
 
 ### Adding Custom Reactions to SelectedReactionsMenu and SelectedMessageMenu
 
@@ -130,7 +130,7 @@ fun customReactionIcons(): Map<String, ReactionIcon> {
 
 ```
 
-This is a `Composable` function that returns a map of your custom reactions. Each map has it's type and a `ReactionIcon`. Now you only need to add these to your `SelectedReactionsMenu` or `SelectedMessageMenu` as follows:
+This is a `Composable` function that returns a map of your custom reactions. Each map has its type and a `ReactionIcon`. Now you only need to add these to your `SelectedReactionsMenu` or `SelectedMessageMenu` as follows:
 
 ```kotlin
 SelectedMessageMenu(
@@ -157,13 +157,13 @@ SelectedMessageMenu(
 
 In the code snippet above, you provide your custom reactions using the `reactionTypes` property in the  `SelectedMessageMenu`. The same applies to `SelectedMessageMenu`
 
-When you run the app, it will use your custom reactions even if you've not provide the custom `ReactionIconFactory`.
+When you run the app, it will use your custom reactions even if you've not provided the custom `ReactionIconFactory`.
 
-You've learned how to add your own custom reactions, in the next section, you'll learn how to add spring and size animations to the reactios you've added.
+You've learned how to add your custom reactions. In the next section, you'll learn how to add spring and size animations to the reactions you've added.
 
 ### Adding Animations to Reactions
 
-The Stream Jetpack Compose UI components are highly customisable. It's easy for you to add new components to them or customize the existing components according to your own requirements.  With this it's easy to add animations to components and still take advantages of the features that the SDK offers.
+The Stream Jetpack Compose UI components are highly customizable. It's easy for you to add new components to them or customize the existing components according to your requirements. With this, it's easy to add animations to components and still take advantage of the SDK's features.
 
 #### Adding Spring Animation
 
@@ -191,7 +191,7 @@ internal fun DefaultReactionOptionItem(
 }
 ```
 
-In the code above, you're creating an animation value  for the sping animation.  You also have a `LaunchedEffect` block that updates the animation state. Here's how the `ReactionButtonState` looks like:
+You're creating an animation value for the sping animation in the code above. You also have a `LaunchedEffect` block that updates the animation state. Here's what the `ReactionButtonState` looks like:
 
 ```kotlin
 enum class ReactionButtonState {
@@ -252,18 +252,18 @@ enum class ReactionButtonState {
 
 To sum up what happens:
 
-- This creates the ReactionIcon size animation. The animation enalrges the reaction once a user taps on any of the reaction.
-- Here, you create an `Image` composable for the a single reaction.  You also pass the spring animation to the `Modifier` . You also update the `ReactionButtonState`  for the size animation when the images is clicked. The icons enlarges then once the animation is complete you send your reaction to the message by calling ` onReactionOptionSelected(option) inside the `finishedListener` of the animation.
+- This creates the ReactionIcon size animation. The animation enlarges the reaction once a user taps on any of the reactions.
+- Here, you create an `Image` composable for a single reaction. You also pass the spring animation to the `Modifier` . When the image is clicked, you also update the `ReactionButtonState`  for the size animation. The icon enlarges then once the animation is complete, you send your reaction to the message by calling ` onReactionOptionSelected(option) inside the `finishedListener` of the animation.
 
 #### Adding CustomReactionOptions to SelectedReactionsMenu
 
-You already have all the custom implementation for reactions, now you'll learn how to integrate this custom implementation to `SelectedReactionsMenu`. 
+You already have all the custom implementation for reactions. Now you'll learn how to integrate this custom implementation to `SelectedReactionsMenu`. 
 
 To start  with you'll use the `headerContent` property of `SelectedMessageMenu` and `SelectedReactionsMenu` to add the custom UI implementations.
 
-**Note:** to use these components you need to have used the CustomUI options where you add the components to the **MesssageScreen**. You can view the full sample class [here](https://github.com/wangerekaharun/StreamComposeAttachments/blob/main/app/src/main/java/io/getstream/streamcomposeattachments/activities/CustomMessageScreen.kt).
+**Note:** to use these components, you need to have used the CustomUI options where you add the components to the **MesssageScreen**. You can view the entire sample class [here](https://github.com/wangerekaharun/StreamComposeAttachments/blob/main/app/src/main/java/io/getstream/streamcomposeattachments/activities/CustomMessageScreen.kt).
 
-This is how the `SelectedMessageMenu` , a component that shows different message options  when a message is selected looks like:
+The `SelectedMessageMenu` , a component that shows different message options  when a message is selected, looks like this:
 
 ```kotlin
 SelectedMessageMenu(
@@ -297,13 +297,13 @@ SelectedMessageMenu(
 )
 ```
 
-From the code above, you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons'  in the ` `headerContent`.  In addtion, you also pass you actions so that the SDK can  perform the message action. Running the app, you should have the srping animation on your reactions now.
+From the code above, you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons'  in the ` `headerContent`.  In addition, you also pass your actions so that the SDK can perform the message action. Running the app, you should have the spring animation on your reactions now.
 
 ![reaction sping animation](images/spring_animation.gif "Spring Aniamtions in Reactions.")
 
-Wow you can now see the amazing spins animations on your reactions!  See how easy it is to customize the components :-)
+Wow! You can now see the fantastic spring animations on your reactions! See how easy it is to customize the components :-)
 
-Lastly, you'll look at the size animation on the reaction icon.  This is how the `SelectedReactionsMenu` , a components that shows all user reactions for a message looks like:
+Lastly, you'll look at the size animation on the reaction icon. The `SelectedReactionsMenu` , a component that shows all user reactions to a message, looks like this:
 
 ```       kotlin
 SelectedReactionsMenu(
@@ -332,16 +332,16 @@ SelectedReactionsMenu(
 )
 ```
 
-From the code above, as before you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons' .  The only difference is that here you use the [Stream low-level client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client/) to send reactions.  Running the app you should have the size animation when you tap a single reaction.
+From the code above, as before, you add your `CustomReactionOptions` component, passing in the `selectedMessage` and your `customReactionIcons' . Here, the only difference is that you use the [Stream low-level client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client/) to send reactions. Running the app, you should have the size animation when you tap a single reaction.
 
 ![reaction icon size animation](images/reaction_icon_size_animation.gif "Reaction Icon Size Animation.")
 
-You can add as many animations to these UI Componets according to your requirements. 
+You can add as many animations to these UI Components according to your requirements. 
 
 ### Conclusion
 
-To learn more about Stream's Android SDK, go to the [GitHub repository](https://github.com/GetStream/stream-chat-android) which is a great starting point to all the available docs and samples.
+To learn more about Stream's Android SDK, go to the [GitHub repository](https://github.com/GetStream/stream-chat-android), which is a great starting point to all the available docs and samples.
 
-Now that the JetPack Compose Components are stable, we can't wait to see what you'll build. And as seen from this article they're highly customizable.  In case you have any feedback on using the SDK, reach the team [on Twitter](https://twitter.com/getstream_io) and [on GitHub](https://github.com/GetStream/stream-chat-android).
+Now that the JetPack Compose Components are stable, we can't wait to see what you'll build. Furthermore, as seen from this article they're highly customizable. In case you have any feedback on using the SDK, reach the team [on Twitter](https://twitter.com/getstream_io) and [on GitHub](https://github.com/GetStream/stream-chat-android).
 
-You can get the full sample project with the examples shown in this tutorial [here]https://github.com/wangerekaharun/CustomComposeReactions).
+You can get the complete sample project with the examples shown in this tutorial [here]https://github.com/wangerekaharun/CustomComposeReactions).
