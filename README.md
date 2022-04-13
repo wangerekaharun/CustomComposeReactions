@@ -155,7 +155,7 @@ SelectedMessageMenu(
 )
 ```
 
-In the code snippet above, you provide your custom reactions using the `reactionTypes` property in the  `SelectedMessageMenu`. The same applies to `SelectedMessageMenu`
+In the code snippet above, you provide your custom reactions using the `reactionTypes` property in the  `SelectedMessageMenu`. The same applies to `SelectedMessageMenu`.
 
 When you run the app, it will use your custom reactions even if you've not provided the custom `ReactionIconFactory`.
 
