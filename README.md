@@ -300,7 +300,7 @@ SelectedMessageMenu(
 )
 ```
 
-From the code above, you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons'  in the ` `headerContent`.  In addition, you also pass your actions so that the SDK can perform the message action. Running the app, you should have the spring animation on your reactions now.
+From the code above, you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons'  in the `headerContent`.  In addition, you also pass your actions so that the SDK can perform the message action. Running the app, you should have the spring animation on your reactions now.
 
 ![reaction sping animation](images/spring_animation.gif "Spring Aniamtions in Reactions.")
 
