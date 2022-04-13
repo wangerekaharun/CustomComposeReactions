@@ -11,7 +11,7 @@ With the new **SDK v5**, the ReactionsTypes API supports even more complex react
 The Stream Chat SDK has the following reactions: thumbs up/down, love, LOL. Users can react to messages with either of these reactions. As with all the components in the Chat SDK, you can override these default reactions and provide your custom ones. There are two ways in which you can provide your custom reactions:
 
 - Using the `reactionIconFactory` property in `ChatTheme`.
-- Using the `reactionTypes` property in the `SelectedReactionsMenu` or `SelectedMessageMenu`
+- Using the `reactionTypes` property in the `SelectedReactionsMenu` or `SelectedMessageMenu`.
 
 First of all, you'll deep dive into the `ReactionIconFactory` class in the next section.
 
