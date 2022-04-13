@@ -94,7 +94,7 @@ When you run your app, you should see:
 
 ![message custom reactions](images/message_with_custom_reaction.png "Message with Custom Reactions.")
 
-In addition to using the `reactionIconFactory` in `ChatTheme` you can also provide your custom reactions using the `SelectedReactionsMenu` or  `SelectedMessageMenu`. You'll be looking at that in the next section.
+In addition to using the `reactionIconFactory` in `ChatTheme` you can also provide your custom reactions using the `SelectedReactionsMenu` or  `SelectedMessageMenu` components. You'll be looking at that in the next section.
 
 ### Adding Custom Reactions to SelectedReactionsMenu and SelectedMessageMenu
 
