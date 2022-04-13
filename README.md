@@ -260,9 +260,9 @@ To sum up what happens:
 
 #### Adding CustomReactionOptions to SelectedReactionsMenu
 
-You already have all the custom implementation for reactions. Now you'll learn how to integrate this custom implementation to `SelectedReactionsMenu`. 
+You already have all the custom implementation for reactions and animations. Now you'll learn how to integrate this custom implementation to `SelectedReactionsMenu`. 
 
-To start  with you'll use the `headerContent` property of `SelectedMessageMenu` and `SelectedReactionsMenu` to add the custom UI implementations.
+To start with, you'll use the `headerContent` property of `SelectedMessageMenu` and `SelectedReactionsMenu` to add the custom UI implementations.
 
 **Note:** to use these components, you need to have used the CustomUI options where you add the components to the **MesssageScreen**. You can view the entire sample class [here](https://github.com/wangerekaharun/StreamComposeAttachments/blob/main/app/src/main/java/io/getstream/streamcomposeattachments/activities/CustomMessageScreen.kt).
 
