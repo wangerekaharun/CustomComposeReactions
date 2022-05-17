@@ -299,7 +299,7 @@ SelectedMessageMenu(
 
 From the code above, you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons'  in the ` `headerContent`.  In addtion, you also pass you actions so that the SDK can  perform the message action. Running the app, you should have the srping animation on your reactions now.
 
-![reaction sping animation](images/spring_animation.gif "Spring Aniamtions in Reactions.")
+![reaction sping animation](images/spring_animation.mp4 "Spring Aniamtions in Reactions.")
 
 Wow you can now see the amazing spins animations on your reactions!  See how easy it is to customize the components :-)
 
@@ -334,7 +334,7 @@ SelectedReactionsMenu(
 
 From the code above, as before you add your `CustomReactionOptions` component passing in the `selectedMessage` and your `customReactionIcons' .  The only difference is that here you use the [Stream low-level client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client/) to send reactions.  Running the app you should have the size animation when you tap a single reaction.
 
-![reaction icon size animation](images/reaction_icon_size_animation.gif "Reaction Icon Size Animation.")
+![reaction icon size animation](images/reaction_icon_size_animation.mp4 "Reaction Icon Size Animation.")
 
 You can add as many animations to these UI Componets according to your requirements. 
 
